@@ -116,87 +116,44 @@ stir(1)
 ' 490 uE -> 28
 ' 238 uE -> 18
 ' 112 uE -> 13
-#lt(1)=0
+#lt(1)=50
 
-' concentrate algae to 10 ug chl per mL
-' start NeoFox logging
-' insert O2 probe and sparge needle
-' start air flow
+' concentrate algae to 20 ug chl per mL
+' start 5% CO2 gas mix flow
 ' start experiment
 
-' 10 mins with bubbling with air in the dark
-' with farred in the second half of the dark interval
+' 1 minute with bubbling with 5% CO2 in the dark
 stir(1)
 intensity(@lt(0))
-wait(300)
-far_red(1)
-wait(300)
-far_red(0)
+wait(60)
 
-' switch gas to 5% CO in air and click skip wait
-' for 1 minute of bubbling
-' and then remove the sparge needle and shut off the gas
+' switch-off the gas 
+' then remove the sparge needle and shut off the gas
+' then add DCMU to 10 uM
+' then click skip wait
 stir(0)
 wait(3600)
 stir(1)
-wait(60)
 
-'resting dark respiration for 3 minutes
-wait(180)
+' 5 minute wait for DCMU to take effect
+wait(300)
+' fluorescence should look funky if DCMU worked
+append_base(_DCMU_flr_)
+sub(sinfldark)
 
-
-' FvFm
-append_base(_flr_)
-sub(sinfl)
-
-' light on
-#lt(1)=50
+' do 
+wait(30)
+append_base(_DCMU_p700_)
+sub(703firk)
 intensity(@lt(1))
-
-' light O2 production
-wait(180)
-
-' ECS measurement
-append_base(_vO2_ECS_)
+stir(1)
+wait(5)
+append_base(_DCMU_ECS_)
 sub(sindirk)
-
-' Ph2 measurement
-append_base(_vO2_flr_)
-sub(sinfl)
-
-' dark O2 consumption or diffusion
-intensity(@lt(0))
-wait(180)
-
-' dark recovery without far red
-' Ph2 measurement
-append_base(_flr_)
-sub(sinfldark)
-wait(111)
-append_base(_flr_)
-sub(sinfldark)
-wait(111)
-append_base(_flr_)
-sub(sinfldark)
-
-' dark recovery with far red
-far_red(1)
-wait(111)
-append_base(_flr_)
-sub(sinfldark)
-far_red(1)
-wait(111)
-append_base(_flr_)
-sub(sinfldark)
-far_red(1)
-wait(111)
-append_base(_flr_)
-sub(sinfldark)
-
 
 
 ' done
-' rinse O2 probe and sparge needle with ethanol and water
+' dispose of culture in DCMU waste collection
 
 
 ' end of experiment
