@@ -128,9 +128,8 @@ stir(1)
 ' with farred in the second half of the dark interval
 stir(1)
 intensity(@lt(0))
-wait(300)
 far_red(1)
-wait(300)
+wait(600)
 far_red(0)
 
 ' switch gas to 5% CO in air and click skip wait
