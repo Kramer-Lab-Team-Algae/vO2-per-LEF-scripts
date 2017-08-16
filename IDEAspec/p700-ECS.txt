@@ -1,0 +1,252 @@
+' Script to measure o2 evolution
+set_base_file
+ref_channel(1)
+
+!lt
+!sat
+
+
+record_events(1)
+plot_clear
+record_files(1)
+note_query
+record_script
+
+
+number_protocols(5)
+gain_slop(0.7)
+
+'basic dirk
+current_protocol(1)
+in_channel(0)
+adc_gain(bip10volts)
+measuring_pulse_duration(20u)
+m_number_loops(3)
+m_intensity(0,0,0)
+l_measuring_interval(2m,2m,2m)
+m_pulse_set(250,250,250)
+m_number_measuring_lights(1)
+m_measuring_light(7)
+m_detector_gain(3)
+m_reference_gain(4)
+baseline_start(241)
+baseline_end(250)
+
+'basic fluorescence
+current_protocol(2)
+in_channel(0)
+adc_gain(bip10volts)
+measuring_pulse_duration(20u)
+m_number_loops(5)
+m_intensity(0,0,0,0,0)
+m_pulse_set(100,100,200,100,100)
+m_measuring_light(8)
+l_measuring_interval(5m,5m,5m,5m,5m)
+M_detector_gain(5)
+m_reference_gain(0)
+baseline_start(1)
+baseline_end(10)
+
+'p700
+current_protocol(5)
+in_channel(0)
+adc_gain(bip10volts)
+measuring_pulse_duration(10u)
+m_number_loops(4)
+m_pulse_set(500,1000,1000,1000)
+m_number_measuring_lights(1)
+m_measuring_light(1)
+m_intensity(0,15,15,0)
+m_far_red(0,0,0,0)
+l_measuring_interval(5m,5m,5m,5m)
+m_detector_gain(0)
+m_reference_gain(2)
+' need to auto_gain
+baseline_start(400)
+baseline_end(500)
+
+
+'traces
+number_traces(100)
+
+current_trace(1)
+save_mode(file_append)
+time_mode(sequential)
+trace_note(fluorescence)
+trace_protocol(2)
+
+current_trace(2)
+save_mode(file_append)
+time_mode(sequential)
+trace_note(505 nm)
+trace_protocol(1)
+
+current_trace(3)
+save_mode(average_into)
+time_mode(from_zero)
+trace_note(520)
+trace_protocol(1)
+
+current_trace(4)
+save_mode(file_append)
+time_mode(sequential)
+trace_note(535)
+trace_protocol(1)
+
+current_trace(5)
+save_mode(average_into)
+time_mode(from_zero)
+trace_note(703)
+trace_protocol(5)
+
+current_trace(7)
+save_mode(average_into)
+time_mode(from_zero)
+trace_note(520)
+trace_protocol(1)
+
+'start experiments
+
+f_shutter(0)
+stir(1)
+#sat(1)=255
+#lt(0)=0
+' cal curve - 13 = 112 uE & 16 = 188 uE & 28 = 490 uE
+' 1040 uE <- 50
+' 490 uE -> 28
+' 238 uE -> 18
+' 112 uE -> 13
+#lt(1)=50
+
+' concentrate algae to 20 ug chl per mL
+' start 5% CO2 gas mix flow
+' start experiment
+
+' 1 minute with bubbling with 5% CO2 in the dark
+stir(1)
+intensity(@lt(0))
+wait(60)
+
+' switch-off the gas 
+' then remove the sparge needle and shut off the gas
+' then add DCMU to 10 uM
+' then click skip wait
+stir(0)
+wait(3600)
+stir(1)
+
+' 5 minute wait for DCMU to take effect
+wait(300)
+' fluorescence should look funky if DCMU worked
+append_base(_DCMU_flr_)
+sub(sinfldark)
+
+' do 
+wait(30)
+append_base(_DCMU_p700_)
+sub(703firk)
+intensity(@lt(1))
+stir(1)
+wait(5)
+append_base(_DCMU_ECS_)
+sub(sindirk)
+
+
+' done
+' dispose of culture in DCMU waste collection
+
+
+' end of experiment
+far_red(0)
+intensity(0)
+stir(0)
+end
+
+
+
+'single fluorescence trace
+sinfl|
+
+current_trace(1)
+current_protocol(2)
+m_intensity(@lt(1),@sat(1),0,0,0)
+m_far_red(0,0,0,1,0)
+
+f_shutter(1)
+stir(0)
+wait(5)
+m_trace
+intensity(@lt(1))
+stir(1)
+plot_raw(1)
+
+return
+
+
+'single fluorescence trace
+sinfldark|
+
+current_trace(1)
+current_protocol(2)
+m_intensity(0,@sat(1),0,0,0)
+m_far_red(0,0,0,1,0)
+
+f_shutter(1)
+stir(0)
+wait(5)
+m_trace
+intensity(@lt(0))
+stir(1)
+plot_raw(1)
+
+return
+
+
+
+'single 520nm dirk
+sindirk|
+
+current_trace(3)
+current_protocol(1)
+m_intensity(@lt(1),0,@lt(1))
+
+f_shutter(0)
+stir(0)
+wait(5)
+lb(2,4)
+m_trace
+wait(1)
+le(2)
+stir(1)
+
+return
+
+
+
+703firk|
+
+current_trace(5)
+current_protocol(5)
+f_shutter(1)
+stir(0)
+wait(5)
+auto_gain
+stir(1)
+wait(5)
+
+lb(2,8)
+
+stir(1)
+wait(5)
+stir(0)
+wait(5)
+m_trace
+plot_raw(5)
+plot_ref(6)
+delta_a
+plot_delta(2)
+
+le(2)
+
+return
+
