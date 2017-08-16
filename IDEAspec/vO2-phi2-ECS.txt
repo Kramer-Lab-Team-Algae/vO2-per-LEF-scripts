@@ -130,7 +130,6 @@ stir(1)
 intensity(@lt(0))
 far_red(1)
 wait(600)
-far_red(0)
 
 ' switch gas to 5% CO in air and click skip wait
 ' for 1 minute of bubbling
@@ -139,6 +138,11 @@ stir(0)
 wait(3600)
 stir(1)
 wait(60)
+far_red(0)
+' FvFm
+append_base(_flr_)
+sub(sinfl)
+
 
 'resting dark respiration for 3 minutes
 wait(180)
