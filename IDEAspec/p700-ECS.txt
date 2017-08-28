@@ -60,8 +60,8 @@ m_intensity(0,15,15,0)
 m_far_red(0,0,0,0)
 l_measuring_interval(5m,5m,5m,5m)
 m_detector_gain(0)
-m_reference_gain(2)
-' need to auto_gain
+m_reference_gain(1)
+' do not auto_gain
 baseline_start(400)
 baseline_end(500)
 
@@ -228,11 +228,6 @@ return
 current_trace(5)
 current_protocol(5)
 f_shutter(1)
-stir(0)
-wait(5)
-auto_gain
-stir(1)
-wait(5)
 
 lb(2,8)
 
