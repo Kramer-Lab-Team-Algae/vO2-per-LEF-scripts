@@ -54,7 +54,7 @@ ecs_column = 3 # delta-A channel
 ecs_baseline_start = 200
 ecs_baseline_end = 250
 ecs_decay_start = 250
-ecs_decay_end = 275
+ecs_decay_end_no_dcmu = 275
 ecs_decay_end_dcmu = 500
 
 p700_num_points = sum( [500,1000,1000,1000] )
@@ -162,6 +162,9 @@ def process_ECSDIRK_file(file_path):
 		t = data[0][ m_start : m_end ]
 		x0 = t[ecs_decay_start]
 		# define a function for fitting
+		ecs_decay_end = ecs_decay_end_no_dcmu
+		if('dcmu' in file_path):
+			ecs_decay_end = ecs_decay_end_dcmu
 		def f(x, coefficients):
 			# Y=A*e^((-1/tau)*(x-x0))+y0:
 			# coefficients: [A, tau, y0]
